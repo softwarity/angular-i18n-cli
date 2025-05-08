@@ -1,0 +1,48 @@
+{
+  "name": "@softwarity/angular-i18n-cli",
+  "version": "1.0.0",
+  "description": "CLI tool to help manage Angular i18n configuration in your projects",
+  "main": "dist/index.js",
+  "bin": {
+    "angular-i18n": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "angular",
+    "i18n",
+    "internationalization",
+    "localization",
+    "cli"
+  ],
+  "author": "Softwarity",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/softwarity/angular-i18n-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/softwarity/angular-i18n-cli/issues"
+  },
+  "homepage": "https://github.com/softwarity/angular-i18n-cli#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "commander": "^11.1.0",
+    "inquirer": "^9.2.12",
+    "chalk": "^4.1.2"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^20.11.19",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+} 
