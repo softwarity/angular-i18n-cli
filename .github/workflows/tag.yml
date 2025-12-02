@@ -18,6 +18,3 @@ jobs:
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - run: npm publish --registry https://npm.pkg.github.com/ --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GH_WRITE_PACKAGE }}
