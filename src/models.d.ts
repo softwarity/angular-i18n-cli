@@ -27,6 +27,7 @@ interface AngularConfig {
         'extract-i18n'?: {
           builder: string;
           options: {
+            outputPath?: string;
             targetFiles?: string[];
             [key: string]: any;
           };

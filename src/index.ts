@@ -146,8 +146,8 @@ program.command('add').description('Add a new locale').action(async () => {
     if (!config.projects[project].i18n) {
       throw new Error('i18n not initialized. Run init-i18n first.');
     }
-
-    config.projects[project].i18n!.locales[localeCode] = { translation: `src/locale/messages.${localeCode}.xlf`, subPath: localeCode };
+    const outputPath = config.projects[project].architect!['extract-i18n']!.options?.outputPath || 'src/locales';
+    config.projects[project].i18n!.locales[localeCode] = { translation: `${outputPath}/messages.${localeCode}.xlf`, subPath: localeCode };
 
     if (!config.projects[project].architect?.build?.configurations) {
       config.projects[project].architect = {
