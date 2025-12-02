@@ -121,14 +121,6 @@ program.command('init').description('Initialize i18n configuration').action(asyn
     console.error(chalk.red('Error:'), error);
   }
 });
-function isValidLocale(code: string) {
-  try {
-    Intl.getCanonicalLocales(code);
-    return true;
-  } catch {
-    return false;
-  }
-}
 program.command('add').description('Add a new locale').action(async () => {
   try {
     const config = await readAngularConfig();
