@@ -121,7 +121,14 @@ program.command('init').description('Initialize i18n configuration').action(asyn
     console.error(chalk.red('Error:'), error);
   }
 });
-
+function isValidLocale(code: string) {
+  try {
+    Intl.getCanonicalLocales(code);
+    return true;
+  } catch {
+    return false;
+  }
+}
 program.command('add').description('Add a new locale').action(async () => {
   try {
     const config = await readAngularConfig();
@@ -131,13 +138,13 @@ program.command('add').description('Add a new locale').action(async () => {
       {
         type: 'input',
         name: 'localeCode',
-        message: 'Enter locale code (e.g., fr):',
+        message: 'Enter locale code (BCP 47)  (e.g., fr):',
         validate: (input) => {
           try {
-            new Intl.Locale(input);
+            Intl.getCanonicalLocales(input)
             return true;
           } catch {
-            return 'Please enter a valid locale code';
+            return `Please enter a valid locale code. ${input} is not a valid BCP 47 tags. See https://angular.dev/guide/i18n/locale-id for reference.`;
           }
         }
       }
