@@ -1,6 +1,6 @@
 {
   "name": "@softwarity/angular-i18n-cli",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "CLI tool to help manage Angular i18n configuration in your projects",
   "main": "dist/index.js",
   "bin": {
