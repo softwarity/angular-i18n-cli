@@ -141,8 +141,8 @@ program.command('add').description('Add a new locale').action(async () => {
         message: 'Enter locale code (BCP 47)  (e.g., fr):',
         validate: (input) => {
           try {
-            Intl.getCanonicalLocales(input)
-            return true;
+            const displayName = new Intl.DisplayNames(['en'], { type: 'language' });
+            return displayName.of(input) != input;
           } catch {
             return `Please enter a valid locale code. ${input} is not a valid BCP 47 tags. See https://angular.dev/guide/i18n/locale-id for reference.`;
           }
