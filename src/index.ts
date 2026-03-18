@@ -41,8 +41,16 @@ async function writeAngularConfig(config: AngularConfig): Promise<void> {
   fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
 }
 
-async function selectProject(config: AngularConfig): Promise<string> {
+async function selectProject(config: AngularConfig, projectName?: string): Promise<string> {
   const projects = Object.keys(config.projects);
+
+  if (projectName) {
+    if (!projects.includes(projectName)) {
+      throw new Error(`Project "${projectName}" not found. Available: ${projects.join(', ')}`);
+    }
+    return projectName;
+  }
+
   if (projects.length === 1) return projects[0];
 
   const { project } = await inquirer.prompt([
@@ -58,10 +66,14 @@ async function selectProject(config: AngularConfig): Promise<string> {
 
 program.name('angular-i18n').description('CLI for managing Angular i18n configuration');
 
-program.command('init').description('Initialize i18n configuration').action(async () => {
+program.command('init')
+  .description('Initialize i18n configuration')
+  .option('--project <name>', 'Project name (skips interactive selection)')
+  .option('--source-locale <code>', 'Source locale code (skips interactive prompt)', 'en')
+  .action(async (options) => {
   try {
     const config = await readAngularConfig();
-    const project = await selectProject(config);
+    const project = await selectProject(config, options.project);
 
     // Check for @angular/localize
     const hasLocalize = config.projects[project].architect?.build?.options?.polyfills?.includes('@angular/localize/init');
@@ -89,15 +101,19 @@ program.command('init').description('Initialize i18n configuration').action(asyn
       ...config.projects[project].architect!['extract-i18n']!.options,
       format: 'xlf'
     };
-    
-    const { sourceLocale } = await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'sourceLocale',
-        message: 'Enter source locale code (default: en):',
-        default: 'en'
-      }
-    ]);
+
+    let sourceLocale = options.sourceLocale;
+    if (!sourceLocale) {
+      const answers = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'sourceLocale',
+          message: 'Enter source locale code (default: en):',
+          default: 'en'
+        }
+      ]);
+      sourceLocale = answers.sourceLocale;
+    }
 
     if (!config.projects[project].i18n) {
       config.projects[project].i18n = { sourceLocale: { code: sourceLocale, subPath: sourceLocale }, locales: {} };
@@ -121,26 +137,41 @@ program.command('init').description('Initialize i18n configuration').action(asyn
     console.error(chalk.red('Error:'), error);
   }
 });
-program.command('add').description('Add a new locale').action(async () => {
+function validateLocaleCode(input: string): true | string {
+  try {
+    const displayName = new Intl.DisplayNames(['en'], { type: 'language' });
+    return displayName.of(input) != input ? true : `Please enter a valid locale code. ${input} is not a valid BCP 47 tags. See https://angular.dev/guide/i18n/locale-id for reference.`;
+  } catch {
+    return `Please enter a valid locale code. ${input} is not a valid BCP 47 tags. See https://angular.dev/guide/i18n/locale-id for reference.`;
+  }
+}
+
+program.command('add')
+  .description('Add a new locale')
+  .option('--project <name>', 'Project name (skips interactive selection)')
+  .option('--locale <code>', 'Locale code BCP 47 (skips interactive prompt)')
+  .action(async (options) => {
   try {
     const config = await readAngularConfig();
-    const project = await selectProject(config);
+    const project = await selectProject(config, options.project);
 
-    const { localeCode } = await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'localeCode',
-        message: 'Enter locale code (BCP 47)  (e.g., fr):',
-        validate: (input) => {
-          try {
-            const displayName = new Intl.DisplayNames(['en'], { type: 'language' });
-            return displayName.of(input) != input;
-          } catch {
-            return `Please enter a valid locale code. ${input} is not a valid BCP 47 tags. See https://angular.dev/guide/i18n/locale-id for reference.`;
-          }
-        }
+    let localeCode = options.locale;
+    if (localeCode) {
+      const validation = validateLocaleCode(localeCode);
+      if (validation !== true) {
+        throw new Error(validation);
       }
-    ]);
+    } else {
+      const answers = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'localeCode',
+          message: 'Enter locale code (BCP 47)  (e.g., fr):',
+          validate: validateLocaleCode
+        }
+      ]);
+      localeCode = answers.localeCode;
+    }
 
     if (!config.projects[project].i18n) {
       throw new Error('i18n not initialized. Run init-i18n first.');
@@ -181,24 +212,36 @@ program.command('add').description('Add a new locale').action(async () => {
   }
 });
 
-program.command('remove').description('Remove a locale').action(async () => {
+program.command('remove')
+  .description('Remove a locale')
+  .option('--project <name>', 'Project name (skips interactive selection)')
+  .option('--locale <code>', 'Locale code to remove (skips interactive prompt)')
+  .action(async (options) => {
   try {
     const config = await readAngularConfig();
-    const project = await selectProject(config);
+    const project = await selectProject(config, options.project);
 
     const availableLocales = Object.keys(config.projects[project].i18n?.locales || {});
     if (availableLocales.length === 0) {
       throw new Error('No locales configured');
     }
 
-    const { localeCode } = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'localeCode',
-        message: 'Select locale to remove:',
-        choices: availableLocales
+    let localeCode = options.locale;
+    if (localeCode) {
+      if (!availableLocales.includes(localeCode)) {
+        throw new Error(`Locale "${localeCode}" is not configured. Available: ${availableLocales.join(', ')}`);
       }
-    ]);
+    } else {
+      const answers = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'localeCode',
+          message: 'Select locale to remove:',
+          choices: availableLocales
+        }
+      ]);
+      localeCode = answers.localeCode;
+    }
 
     if (config.projects[project].i18n?.locales) {
       delete config.projects[project].i18n!.locales[localeCode];

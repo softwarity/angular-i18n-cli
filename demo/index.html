@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@softwarity/angular-i18n-cli</title>
+  <link rel="icon" type="image/svg+xml" href="https://www.softwarity.io/img/softwarity.svg">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    html.dark { color-scheme: dark; }
+    html:not(.dark) { color-scheme: light; }
+
+    :root {
+      --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      --bg-primary: #161b22;
+      --bg-secondary: #21262d;
+      --text-primary: #e6edf3;
+      --text-secondary: #c9d1d9;
+      --text-muted: #8b949e;
+      --accent-blue: #58a6ff;
+      --accent-green: #238636;
+      --accent-purple: #a371f7;
+      --accent-orange: #d29922;
+      --accent-red: #f85149;
+      --border-color: #30363d;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    a {
+      color: var(--accent-blue);
+      text-decoration: none;
+    }
+    a:hover { text-decoration: underline; }
+
+    code {
+      font-family: 'Courier New', Consolas, monospace;
+      background-color: var(--bg-secondary);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      color: var(--accent-blue);
+    }
+
+    /* Main Layout */
+    .main-content {
+      min-height: 100vh;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .card-container {
+      width: 100%;
+      max-width: 1200px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Card Header */
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-link { display: flex; }
+    .logo {
+      height: 48px;
+      width: auto;
+    }
+
+    .title-block h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    .badges {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .badges img { height: 20px; }
+
+    .nav-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .nav-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .nav-button:hover {
+      background-color: rgba(88, 166, 255, 0.1);
+      border-color: var(--accent-blue);
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .github-icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    .material-icons {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Description */
+    .description {
+      color: var(--text-secondary);
+      margin: 0 0 24px 0;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+      line-height: 1.6;
+    }
+
+    /* Sections */
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin: 32px 0 24px 0;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .doc-section {
+      margin-bottom: 32px;
+    }
+
+    .doc-section h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0 0 12px 0;
+      color: var(--text-primary);
+    }
+
+    .doc-section h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 16px 0 8px 0;
+      color: var(--text-primary);
+    }
+
+    .doc-section p {
+      color: var(--text-secondary);
+      margin: 0 0 12px 0;
+    }
+
+    ul.feature-list {
+      color: var(--text-secondary);
+      margin: 0 0 16px 0;
+      padding-left: 24px;
+    }
+    ul.feature-list li {
+      margin-bottom: 8px;
+    }
+
+    /* API Table */
+    .api-table-wrapper {
+      overflow-x: auto;
+      margin-bottom: 16px;
+    }
+
+    .api-table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .api-table th, .api-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .api-table th {
+      background-color: rgba(0, 0, 0, 0.2);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .api-table td {
+      color: var(--text-secondary);
+    }
+
+    .api-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Footer */
+    .card-footer {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .card-footer a {
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+
+    .card-footer a:hover {
+      color: var(--accent-blue);
+      text-decoration: none;
+    }
+
+    .footer-logo {
+      height: 20px;
+      width: auto;
+    }
+
+    /* Code blocks */
+    .code-block-wrapper {
+      position: relative;
+      margin: 0 0 16px 0;
+    }
+
+    pre.code-block {
+      background: #2b2d30;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 16px 48px 16px 20px;
+      font-family: 'Courier New', Consolas, monospace;
+      font-size: 0.9em;
+      color: #a9b7c6;
+      overflow-x: auto;
+      margin: 0;
+      line-height: 1.7;
+      white-space: pre;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      color: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      z-index: 1;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.8);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .copy-btn .material-icons {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+
+    .copy-btn.copied {
+      color: #50fa7b;
+      border-color: #50fa7b;
+    }
+
+    /* Syntax colors */
+    .c-prompt  { color: #50fa7b; user-select: none; }
+    .c-cmd     { color: #e6edf3; }
+    .c-flag    { color: #cc7832; }
+    .c-val     { color: #6a8759; }
+    .c-comment { color: #808080; }
+    .c-output  { color: #8b949e; font-style: italic; }
+    .c-success { color: #50fa7b; }
+    .c-warning { color: #d29922; }
+    .c-error   { color: #f85149; }
+    .c-ask     { color: #58a6ff; }
+
+    /* JSON preview */
+    pre.json-preview {
+      background: #1e1e1e;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 16px 20px;
+      font-family: 'Courier New', Consolas, monospace;
+      font-size: 0.85em;
+      color: #a9b7c6;
+      overflow-x: auto;
+      margin: 8px 0 16px 0;
+      line-height: 1.6;
+      white-space: pre;
+    }
+
+    .j-key    { color: #9876aa; }
+    .j-str    { color: #6a8759; }
+    .j-bool   { color: #cc7832; }
+    .j-brace  { color: #a9b7c6; }
+
+    /* Mode tabs */
+    .mode-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 24px;
+    }
+
+    .mode-tab {
+      padding: 10px 24px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mode-tab:first-child {
+      border-radius: 6px 0 0 6px;
+    }
+
+    .mode-tab:last-child {
+      border-radius: 0 6px 6px 0;
+      border-left: none;
+    }
+
+    .mode-tab.active {
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
+      color: white;
+    }
+
+    .mode-tab:not(.active):hover {
+      background-color: rgba(88, 166, 255, 0.1);
+      color: var(--text-primary);
+    }
+
+    /* Mode visibility */
+    .mode-interactive { display: block; }
+    .mode-noninteractive { display: none; }
+
+    body.noninteractive .mode-interactive { display: none; }
+    body.noninteractive .mode-noninteractive { display: block; }
+
+    /* Workflow / Steps */
+    .workflow {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      margin: 16px 0;
+    }
+
+    .workflow-step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .step-number {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      background: var(--accent-blue);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: white;
+    }
+
+    .step-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .step-content h4 {
+      margin: 4px 0 8px 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .step-content p {
+      color: var(--text-secondary);
+      margin: 0 0 8px 0;
+    }
+
+    /* Command card */
+    .command-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .command-card h3 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 8px 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .command-card h3 .material-icons {
+      color: var(--accent-blue);
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
+    }
+
+    .command-card > p {
+      color: var(--text-secondary);
+      margin: 0 0 16px 0;
+    }
+
+    .command-card h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 16px 0 8px 0;
+      color: var(--text-primary);
+    }
+
+    /* Related services */
+    .services {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    .service-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 20px;
+      transition: all 0.2s;
+    }
+
+    .service-card:hover {
+      border-color: var(--accent-blue);
+      text-decoration: none;
+    }
+
+    .service-card h4 {
+      margin: 0 0 8px 0;
+      color: var(--text-primary);
+      font-size: 1rem;
+    }
+
+    .service-card p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .card-container { padding: 1.25rem; }
+      .title-block h1 { font-size: 1.3rem; }
+      .workflow-step { flex-direction: column; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="main-content">
+    <div class="card-container">
+      <!-- Card Header -->
+      <header class="card-header">
+        <div class="header-left">
+          <a href="https://www.softwarity.io/" target="_blank" class="logo-link">
+            <img src="https://www.softwarity.io/img/softwarity.svg" alt="Softwarity" class="logo">
+          </a>
+          <div class="title-block">
+            <h1>@softwarity/angular-i18n-cli</h1>
+            <div class="badges">
+              <img src="https://img.shields.io/npm/v/@softwarity/angular-i18n-cli.svg" alt="npm version">
+              <img src="https://img.shields.io/badge/license-MIT-blue" alt="license">
+              <img src="https://img.shields.io/badge/angular-19+-dd0031" alt="angular 19+">
+            </div>
+          </div>
+        </div>
+        <nav class="nav-links">
+          <a href="https://github.com/softwarity/angular-i18n-cli#readme" target="_blank" class="nav-button">
+            <span class="material-icons">menu_book</span>
+            Documentation
+          </a>
+          <a href="https://github.com/softwarity/angular-i18n-cli" target="_blank" class="nav-button">
+            <svg class="github-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+            GitHub
+          </a>
+          <a href="https://www.softwarity.io/" target="_blank" class="nav-button">
+            <span class="material-icons">public</span>
+            Softwarity
+          </a>
+          <a href="https://www.npmjs.com/package/@softwarity/angular-i18n-cli" target="_blank" class="nav-button">
+            <span class="material-icons">inventory_2</span>
+            npm
+          </a>
+          <softwarity-projects></softwarity-projects>
+        </nav>
+      </header>
+
+      <!-- Description -->
+      <p class="description">
+        A CLI tool to simplify Angular i18n configuration management.
+        Automates the setup and management of internationalization settings in <code>angular.json</code>
+        for Angular 19+ projects using XLF files and <code>@angular/localize</code>.
+      </p>
+
+      <!-- Getting Started -->
+      <section>
+        <h2>Getting Started</h2>
+
+        <article class="doc-section">
+          <h3>Requirements</h3>
+          <ul class="feature-list">
+            <li><strong>Angular 19</strong> or higher</li>
+            <li><strong>Node.js 18</strong> or higher</li>
+            <li><code>@angular/localize</code> installed</li>
+            <li><code>ng-extract-i18n-merge</code> installed</li>
+          </ul>
+        </article>
+
+        <article class="doc-section">
+          <h3>Installation</h3>
+          <div class="code-block-wrapper">
+            <pre class="code-block"><span class="c-comment"># Install globally</span>
+<span class="c-prompt">$ </span><span class="c-cmd">npm install</span> <span class="c-flag">-g</span> <span class="c-val">@softwarity/angular-i18n-cli</span>
+
+<span class="c-comment"># Or install in your project</span>
+<span class="c-prompt">$ </span><span class="c-cmd">npm install</span> <span class="c-flag">--save-dev</span> <span class="c-val">@softwarity/angular-i18n-cli</span></pre>
+          </div>
+        </article>
+
+        <article class="doc-section">
+          <h3>Prerequisites</h3>
+          <p>Before using the CLI, install the required Angular dependencies:</p>
+          <div class="code-block-wrapper">
+            <pre class="code-block"><span class="c-prompt">$ </span><span class="c-cmd">ng add</span> <span class="c-val">@angular/localize</span>
+<span class="c-prompt">$ </span><span class="c-cmd">ng add</span> <span class="c-val">ng-extract-i18n-merge</span></pre>
+          </div>
+        </article>
+      </section>
+
+      <!-- Commands -->
+      <section>
+        <h2>Commands</h2>
+
+        <!-- Global mode tabs -->
+        <div class="mode-tabs">
+          <button class="mode-tab active" data-mode="interactive" onclick="setMode('interactive')">
+            <span class="material-icons">terminal</span>
+            Interactive
+          </button>
+          <button class="mode-tab" data-mode="noninteractive" onclick="setMode('noninteractive')">
+            <span class="material-icons">code</span>
+            Non-interactive
+          </button>
+        </div>
+
+        <!-- INIT -->
+        <div class="command-card">
+          <h3>
+            <span class="material-icons">play_arrow</span>
+            angular-i18n init
+          </h3>
+          <p>Initializes the i18n configuration in your Angular project. Sets up the source locale, build configurations, and extract-i18n format.</p>
+
+          <div class="mode-interactive">
+            <h4>Usage</h4>
+            <div class="code-block-wrapper">
+              <pre class="code-block"><span class="c-prompt">$ </span><span class="c-cmd">angular-i18n</span> <span class="c-val">init</span>
+<span class="c-ask">? Enter source locale code (default: en): </span><span class="c-cmd">en</span>
+<span class="c-success">i18n configuration initialized successfully!</span></pre>
+            </div>
+          </div>
+
+          <div class="mode-noninteractive">
+            <h4>Usage</h4>
+            <div class="code-block-wrapper">
+              <pre class="code-block"><span class="c-prompt">$ </span><span class="c-cmd">angular-i18n</span> <span class="c-val">init</span> <span class="c-flag">--source-locale</span> <span class="c-val">en</span>
+
+<span class="c-comment"># With explicit project (for monorepos)</span>
+<span class="c-prompt">$ </span><span class="c-cmd">angular-i18n</span> <span class="c-val">init</span> <span class="c-flag">--source-locale</span> <span class="c-val">en</span> <span class="c-flag">--project</span> <span class="c-val">my-app</span></pre>
+            </div>
+          </div>
+
+          <h4>Options</h4>
+          <div class="api-table-wrapper">
+            <table class="api-table">
+              <thead>
+                <tr><th>Option</th><th>Description</th><th>Default</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>--source-locale &lt;code&gt;</code></td>
+                  <td>Source locale code (BCP 47)</td>
+                  <td><code>en</code></td>
+                </tr>
+                <tr>
+                  <td><code>--project &lt;name&gt;</code></td>
+                  <td>Project name (for monorepo workspaces)</td>
+                  <td>Auto-selected if single project</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h4>What it modifies in angular.json</h4>
+          <pre class="json-preview"><span class="j-brace">{</span>
+  <span class="j-key">"projects"</span>: <span class="j-brace">{</span>
+    <span class="j-key">"your-project"</span>: <span class="j-brace">{</span>
+      <span class="j-key">"i18n"</span>: <span class="j-brace">{</span>
+        <span class="j-key">"sourceLocale"</span>: <span class="j-brace">{</span> <span class="j-key">"code"</span>: <span class="j-str">"en"</span>, <span class="j-key">"subPath"</span>: <span class="j-str">"en"</span> <span class="j-brace">}</span>,
+        <span class="j-key">"locales"</span>: <span class="j-brace">{}</span>
+      <span class="j-brace">}</span>,
+      <span class="j-key">"architect"</span>: <span class="j-brace">{</span>
+        <span class="j-key">"build"</span>: <span class="j-brace">{</span>
+          <span class="j-key">"configurations"</span>: <span class="j-brace">{</span>
+            <span class="j-key">"en"</span>: <span class="j-brace">{</span> <span class="j-key">"localize"</span>: [<span class="j-str">"en"</span>], <span class="j-key">"deleteOutputPath"</span>: <span class="j-bool">false</span> <span class="j-brace">}</span>
+          <span class="j-brace">}</span>
+        <span class="j-brace">}</span>,
+        <span class="j-key">"extract-i18n"</span>: <span class="j-brace">{</span>
+          <span class="j-key">"options"</span>: <span class="j-brace">{</span> <span class="j-key">"format"</span>: <span class="j-str">"xlf"</span> <span class="j-brace">}</span>
+        <span class="j-brace">}</span>
+      <span class="j-brace">}</span>
+    <span class="j-brace">}</span>
+  <span class="j-brace">}</span>
+<span class="j-brace">}</span></pre>
+        </div>
+
+        <!-- ADD -->
+        <div class="command-card">
+          <h3>
+            <span class="material-icons">add_circle</span>
+            angular-i18n add
+          </h3>
+          <p>Adds a new locale to your project. Validates the locale code using the <code>Intl.DisplayNames</code> API (BCP 47 compliance).</p>
+
+          <div class="mode-interactive">
+            <h4>Usage</h4>
+            <div class="code-block-wrapper">
+              <pre class="code-block"><span class="c-prompt">$ </span><span class="c-cmd">angular-i18n</span> <span class="c-val">add</span>
+<span class="c-ask">? Enter locale code (BCP 47) (e.g., fr): </span><span class="c-cmd">fr</span>
+<span class="c-success">Locale fr added successfully!</span></pre>
+            </div>
+          </div>
+
+          <div class="mode-noninteractive">
+            <h4>Usage</h4>
+            <div class="code-block-wrapper">
+              <pre class="code-block"><span class="c-prompt">$ </span><span class="c-cmd">angular-i18n</span> <span class="c-val">add</span> <span class="c-flag">--locale</span> <span class="c-val">fr</span>
+<span class="c-success">Locale fr added successfully!</span>
+
+<span class="c-comment"># Add multiple locales</span>
+<span class="c-prompt">$ </span><span class="c-cmd">angular-i18n</span> <span class="c-val">add</span> <span class="c-flag">--locale</span> <span class="c-val">de</span>
+<span class="c-prompt">$ </span><span class="c-cmd">angular-i18n</span> <span class="c-val">add</span> <span class="c-flag">--locale</span> <span class="c-val">es</span></pre>
+            </div>
+          </div>
+
+          <h4>Options</h4>
+          <div class="api-table-wrapper">
+            <table class="api-table">
+              <thead>
+                <tr><th>Option</th><th>Description</th><th>Default</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>--locale &lt;code&gt;</code></td>
+                  <td>Locale code to add (BCP 47, e.g. <code>fr</code>, <code>de</code>, <code>es</code>)</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td><code>--project &lt;name&gt;</code></td>
+                  <td>Project name (for monorepo workspaces)</td>
+                  <td>Auto-selected if single project</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h4>What it modifies in angular.json</h4>
+          <pre class="json-preview"><span class="j-brace">{</span>
+  <span class="j-key">"i18n"</span>: <span class="j-brace">{</span>
+    <span class="j-key">"locales"</span>: <span class="j-brace">{</span>
+      <span class="j-key">"fr"</span>: <span class="j-brace">{</span>
+        <span class="j-key">"translation"</span>: <span class="j-str">"src/locales/messages.fr.xlf"</span>,
+        <span class="j-key">"subPath"</span>: <span class="j-str">"fr"</span>
+      <span class="j-brace">}</span>
+    <span class="j-brace">}</span>
+  <span class="j-brace">}</span>,
+  <span class="j-key">"architect"</span>: <span class="j-brace">{</span>
+    <span class="j-key">"build"</span>: <span class="j-brace">{</span>
+      <span class="j-key">"configurations"</span>: <span class="j-brace">{</span>
+        <span class="j-key">"fr"</span>: <span class="j-brace">{</span> <span class="j-key">"localize"</span>: [<span class="j-str">"fr"</span>], <span class="j-key">"deleteOutputPath"</span>: <span class="j-bool">false</span> <span class="j-brace">}</span>
+      <span class="j-brace">}</span>
+    <span class="j-brace">}</span>,
+    <span class="j-key">"extract-i18n"</span>: <span class="j-brace">{</span>
+      <span class="j-key">"options"</span>: <span class="j-brace">{</span>
+        <span class="j-key">"targetFiles"</span>: [<span class="j-str">"messages.fr.xlf"</span>]
+      <span class="j-brace">}</span>
+    <span class="j-brace">}</span>
+  <span class="j-brace">}</span>
+<span class="j-brace">}</span></pre>
+        </div>
+
+        <!-- REMOVE -->
+        <div class="command-card">
+          <h3>
+            <span class="material-icons">remove_circle</span>
+            angular-i18n remove
+          </h3>
+          <p>Removes a locale from your project. Cleans up the i18n config, build configuration, and extract-i18n target files.</p>
+
+          <div class="mode-interactive">
+            <h4>Usage</h4>
+            <div class="code-block-wrapper">
+              <pre class="code-block"><span class="c-prompt">$ </span><span class="c-cmd">angular-i18n</span> <span class="c-val">remove</span>
+<span class="c-ask">? Select locale to remove:</span>
+<span class="c-output">  fr</span>
+<span class="c-output">  de</span>
+<span class="c-ask">  &gt; es</span>
+<span class="c-success">Locale es removed successfully!</span></pre>
+            </div>
+          </div>
+
+          <div class="mode-noninteractive">
+            <h4>Usage</h4>
+            <div class="code-block-wrapper">
+              <pre class="code-block"><span class="c-prompt">$ </span><span class="c-cmd">angular-i18n</span> <span class="c-val">remove</span> <span class="c-flag">--locale</span> <span class="c-val">fr</span>
+<span class="c-success">Locale fr removed successfully!</span></pre>
+            </div>
+          </div>
+
+          <h4>Options</h4>
+          <div class="api-table-wrapper">
+            <table class="api-table">
+              <thead>
+                <tr><th>Option</th><th>Description</th><th>Default</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>--locale &lt;code&gt;</code></td>
+                  <td>Locale code to remove</td>
+                  <td>-</td>
+                </tr>
+                <tr>
+                  <td><code>--project &lt;name&gt;</code></td>
+                  <td>Project name (for monorepo workspaces)</td>
+                  <td>Auto-selected if single project</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Typical Workflow -->
+      <section>
+        <h2>Typical Workflow</h2>
+        <div class="workflow">
+          <div class="workflow-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h4>Install prerequisites</h4>
+              <div class="code-block-wrapper">
+                <pre class="code-block"><span class="c-prompt">$ </span><span class="c-cmd">ng add</span> <span class="c-val">@angular/localize</span>
+<span class="c-prompt">$ </span><span class="c-cmd">ng add</span> <span class="c-val">ng-extract-i18n-merge</span></pre>
+              </div>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h4>Initialize i18n</h4>
+              <div class="mode-interactive">
+                <div class="code-block-wrapper">
+                  <pre class="code-block"><span class="c-prompt">$ </span><span class="c-cmd">angular-i18n</span> <span class="c-val">init</span>
+<span class="c-ask">? Enter source locale code (default: en): </span><span class="c-cmd">en</span>
+<span class="c-success">i18n configuration initialized successfully!</span></pre>
+                </div>
+              </div>
+              <div class="mode-noninteractive">
+                <div class="code-block-wrapper">
+                  <pre class="code-block"><span class="c-prompt">$ </span><span class="c-cmd">angular-i18n</span> <span class="c-val">init</span> <span class="c-flag">--source-locale</span> <span class="c-val">en</span>
+<span class="c-success">i18n configuration initialized successfully!</span></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h4>Add target locales</h4>
+              <div class="mode-interactive">
+                <div class="code-block-wrapper">
+                  <pre class="code-block"><span class="c-prompt">$ </span><span class="c-cmd">angular-i18n</span> <span class="c-val">add</span>
+<span class="c-ask">? Enter locale code (BCP 47) (e.g., fr): </span><span class="c-cmd">fr</span>
+<span class="c-success">Locale fr added successfully!</span>
+
+<span class="c-prompt">$ </span><span class="c-cmd">angular-i18n</span> <span class="c-val">add</span>
+<span class="c-ask">? Enter locale code (BCP 47) (e.g., fr): </span><span class="c-cmd">de</span>
+<span class="c-success">Locale de added successfully!</span></pre>
+                </div>
+              </div>
+              <div class="mode-noninteractive">
+                <div class="code-block-wrapper">
+                  <pre class="code-block"><span class="c-prompt">$ </span><span class="c-cmd">angular-i18n</span> <span class="c-val">add</span> <span class="c-flag">--locale</span> <span class="c-val">fr</span>
+<span class="c-success">Locale fr added successfully!</span>
+
+<span class="c-prompt">$ </span><span class="c-cmd">angular-i18n</span> <span class="c-val">add</span> <span class="c-flag">--locale</span> <span class="c-val">de</span>
+<span class="c-success">Locale de added successfully!</span></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <h4>Extract &amp; translate</h4>
+              <div class="code-block-wrapper">
+                <pre class="code-block"><span class="c-prompt">$ </span><span class="c-cmd">ng</span> <span class="c-val">extract-i18n</span>
+<span class="c-comment"># Translation files are generated in src/locales/</span>
+<span class="c-comment"># Translate messages.fr.xlf, messages.de.xlf, etc.</span></pre>
+              </div>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+              <h4>Build for a specific locale</h4>
+              <div class="code-block-wrapper">
+                <pre class="code-block"><span class="c-prompt">$ </span><span class="c-cmd">ng build</span> <span class="c-flag">--configuration</span> <span class="c-val">fr</span></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Error Handling -->
+      <section>
+        <h2>Error Handling</h2>
+        <article class="doc-section">
+          <p>The CLI performs validation checks and provides clear error messages:</p>
+          <div class="code-block-wrapper">
+            <pre class="code-block"><span class="c-comment"># Missing @angular/localize</span>
+<span class="c-prompt">$ </span><span class="c-cmd">angular-i18n</span> <span class="c-val">init</span>
+<span class="c-warning">@angular/localize is not configured.</span>
+<span class="c-warning">Please run the following commands:</span>
+<span class="c-output">  ng add @angular/localize</span>
+<span class="c-output">  ng add ng-extract-i18n-merge</span>
+
+<span class="c-comment"># Invalid locale code</span>
+<span class="c-prompt">$ </span><span class="c-cmd">angular-i18n</span> <span class="c-val">add</span> <span class="c-flag">--locale</span> <span class="c-val">xyz</span>
+<span class="c-error">Error: Please enter a valid locale code. xyz is not a valid BCP 47 tag.</span>
+
+<span class="c-comment"># i18n not initialized</span>
+<span class="c-prompt">$ </span><span class="c-cmd">angular-i18n</span> <span class="c-val">add</span> <span class="c-flag">--locale</span> <span class="c-val">fr</span>
+<span class="c-error">Error: i18n not initialized. Run init-i18n first.</span></pre>
+          </div>
+        </article>
+      </section>
+
+      <!-- Related Services -->
+      <section>
+        <h2>Related Services</h2>
+        <div class="services">
+          <a href="https://softwarity.io" target="_blank" class="service-card">
+            <h4>Softwarity.io</h4>
+            <p>API Gateway based on Spring Gateway</p>
+          </a>
+          <a href="https://xliff.softwarity.io" target="_blank" class="service-card">
+            <h4>XLIFF AI Translator</h4>
+            <p>AI-powered translation tool for Angular applications</p>
+          </a>
+        </div>
+      </section>
+
+      <!-- Features -->
+      <section>
+        <h2>Features</h2>
+        <article class="doc-section">
+          <ul class="feature-list">
+            <li><strong>Angular 19+ support</strong> - Designed for the latest Angular i18n workflow</li>
+            <li><strong>Interactive &amp; non-interactive modes</strong> - Use interactively or automate via scripts</li>
+            <li><strong>Locale validation</strong> - BCP 47 compliance via <code>Intl.DisplayNames</code> API</li>
+            <li><strong>Monorepo support</strong> - Works with multi-project Angular workspaces</li>
+            <li><strong>Safe configuration</strong> - Validates prerequisites before modifying <code>angular.json</code></li>
+            <li><strong>XLF format</strong> - Standard XLIFF translation file format</li>
+          </ul>
+        </article>
+      </section>
+
+      <!-- Card Footer -->
+      <footer class="card-footer">
+        <img src="https://www.softwarity.io/img/softwarity.svg" alt="Softwarity" class="footer-logo">
+        <span>Made by</span>
+        <a href="https://www.softwarity.io/" target="_blank">Softwarity</a>
+      </footer>
+    </div>
+  </main>
+
+  <script type="module" src="https://unpkg.com/@softwarity/projects"></script>
+  <script>
+    // Mode toggle
+    function setMode(mode) {
+      document.body.classList.toggle('noninteractive', mode === 'noninteractive');
+      document.querySelectorAll('.mode-tab').forEach(function(tab) {
+        tab.classList.toggle('active', tab.dataset.mode === mode);
+      });
+    }
+
+    // Copy buttons
+    document.querySelectorAll('.code-block-wrapper').forEach(function(wrapper) {
+      var block = wrapper.querySelector('.code-block');
+      if (!block) return;
+
+      var btn = document.createElement('button');
+      btn.className = 'copy-btn';
+      btn.title = 'Copy to clipboard';
+      btn.innerHTML = '<span class="material-icons">content_copy</span>';
+      wrapper.appendChild(btn);
+
+      btn.addEventListener('click', function() {
+        var lines = block.innerText.split('\n');
+        var commands = lines
+          .filter(function(l) { return l.trim().startsWith('$ '); })
+          .map(function(l) { return l.trim().replace(/^\$\s*/, ''); });
+        var text = commands.length > 0 ? commands.join('\n') : block.innerText;
+        navigator.clipboard.writeText(text).then(function() {
+          btn.innerHTML = '<span class="material-icons">check</span>';
+          btn.classList.add('copied');
+          setTimeout(function() {
+            btn.innerHTML = '<span class="material-icons">content_copy</span>';
+            btn.classList.remove('copied');
+          }, 2000);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
