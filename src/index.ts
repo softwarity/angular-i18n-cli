@@ -129,8 +129,6 @@ program.command('init')
       };
     }
 
-    config.projects[project].architect!.build!.configurations![sourceLocale] = { localize: [sourceLocale], deleteOutputPath: false };
-
     await writeAngularConfig(config);
     console.log(chalk.green('i18n configuration initialized successfully!'));
   } catch (error) {
